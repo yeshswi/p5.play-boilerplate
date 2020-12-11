@@ -1,0 +1,130 @@
+var d,dI
+var s,sI
+var iG
+var obs,oI1,oI2,obsGroup
+var PLAY=3
+var END=4
+var gameState=PLAY
+var m,c,ci,cGroup,p,pi
+var score=0
+
+function preload(){
+  dI=loadAnimation("v.png","b.b.png")
+  d2=loadImage("b.b.png")
+  sI=loadImage("scenary.png")
+  oI1=loadImage("o3.png")
+  oI2=loadImage("o4.png")
+  mI=loadImage("b.jpg")
+  ci=loadAnimation("coin.gif")
+  pi=loadImage("img0be16e8d8.png")
+}
+
+
+
+function setup() {
+  createCanvas(500,400);
+  s=createSprite(243,200)
+  s.addImage("t",sI)
+  s.scale=0.8
+  s.velocityX=4;
+  
+  iG=createSprite(250,260,600,3)
+  iG.visible=false;
+  
+  d=createSprite(370,260)
+  d.addAnimation("r",dI)
+  d.scale=0.06
+  d.setCollider("circle",0,0,800)
+ 
+  
+  
+   obsGroup=new Group()
+     cGroup=new Group()
+
+}
+
+function draw() {
+  background("white");
+  
+  if(gameState===PLAY){
+    
+  if((touches.length > 0 ||keyDown("space"))&&d.y>=200){
+    d.velocityY= -20 
+    touches=[]
+  }
+  
+      d.velocityY = d.velocityY + 0.8
+  if(d.isTouching(cGroup)){
+      cGroup.destroyEach()
+    score=score+1
+    }
+  if(score===20){
+     p=createSprite(243,200)
+  p.addImage("t",pi)
+  p.scale=0.48
+    gameState=END
+  }
+
+   if(s.x>500){
+    s.x=250
+     
+     
+  }
+    spawnobstacles()
+    spawnCoin()
+     d.collide(iG)
+     if(d.isTouching(obsGroup)){
+     m=createSprite(243,200)
+  m.addImage("t",mI)
+  m.scale=0.9
+    gameState=END
+  }
+  }
+  if(gameState===END){
+   obsGroup.setVelocityXEach(0)
+ obsGroup.setLifetimeEach(-1);
+    s.velocityX=0;
+    d.addImage("dr",d2)
+      
+  }
+     
+
+ drawSprites()
+  stroke("red")
+    fill("red")
+  textSize(20)
+  text("Score:"+score,400,20)
+
+}
+
+function  spawnobstacles(){
+  if(frameCount % 200 === 0){
+    obs=createSprite(-9,240)
+    obs.velocityX=4;
+    obs.scale=0.02;
+obs.lifetime=700
+
+    rand=Math.round(random(1,2))
+    switch(rand){
+      case 1:obs.addImage(oI1)
+        break;
+        case 2:obs.addImage(oI2)
+        break;
+        default:break;
+    }
+        obsGroup.add(obs)
+
+  }
+}
+
+
+function spawnCoin(){
+  if(frameCount % 300 === 0){
+    c=createSprite(-9,240)
+   c.addAnimation("d",ci)
+    c.velocityX=4;
+    c.scale=0.09;
+    c.lifetime=700
+    cGroup.add(c)
+  }
+}
